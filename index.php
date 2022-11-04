@@ -64,9 +64,12 @@
         <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.12.1/datatables.min.js"></script>
         <!-- add bootstrap library js -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-        
-        <!-- datatable main setup -->
+    
         <script>
+    
+            
+            
+            // setting datatable
             $("#datatable").DataTable({
                 "pagingType": 'full_numbers',
                 // "processing":true,
@@ -92,11 +95,8 @@
                     "orderable":false,
                 }]
             }) ; 
-        </script>
 
 
-        <script>
-        
             // script of add user form 
             $("#add_user").on("click", function(){
                 $modal_title = $(this).data("title") ; 
@@ -137,7 +137,30 @@
 
             }) ; 
 
+            // script for delete user
+            $(document).on('click', '#delete_button', function(){
+                var user_id = $(this).data("user_id") ; 
+                // now delete user directly
+                if(confirm('are you sure?')){
+                    $.ajax({
+                        url:"./handle_files/delete_user.php",
+                        method:"POST",
+                        data:{user_id:user_id},
+                        success:function(data){
+                            json = JSON.parse(data) ; 
+                            if(json['status'] == 'success'){
+                                $("#datatable").DataTable().draw() ; 
+                                $("#response").html('<div class="alert alert-success text-start">user deleted</div>') ; 
+                                setTimeout(function(){
+                                    $("#response").html('') ; 
+                                }, 2000) ; 
+                            }
+                        }
+                    });
+                }
+            }) ; 
 
+            // main modal
             $(document).on("submit", "#user_form", function(event){
                 event.preventDefault() ;
                 var user_id = $("#user_id").val() ; 
@@ -184,71 +207,10 @@
             }) ;
 
 
-            // Start Edit user
-            
-            // script for edit user
-            // $(document).on("submit", "#user_form", function(event){
-            //     event.preventDefault() ; 
-            //     var user_id = $("#user_id").val() ; 
-            //     var user_name = $("#user_name").val() ; 
-            //     var user_email = $("#user_email").val() ; 
-            //     var user_password = $("#user_password").val() ; 
-            //     var user_uname = $("#user_uname").val() ; 
-            //     if(user_name != ''  && user_email != ''  && user_uname != ''){
-            //         $.ajax({
-            //             url:"./handle_files/edit_user.php",
-            //             method:"post",
-            //             data:{user_id:user_id, user_name:user_name, user_email:user_email, user_password:user_password, user_uname:user_uname},
-            //             success:function(data){
-            //                 var json = JSON.parse(data) ; 
-            //                 status = json.status ; 
-            //                 if(status == 'success'){
-            //                     $("#datatable").DataTable().draw() ; 
-            //                     $("#response").html('<div class="alert alert-success">user successfully updated</div>') ;  
-            //                     setTimeout(function(){
-            //                         $("#response").html(''); 
-            //                         $("#edit_user").modal('hide') ; 
-            //                     }, 1000);
-            //                 }else{
-            //                     $("#response_edit").html('<div class="alert alert-danger">user can not be updated</div>') ; 
-            //                     setTimeout(function(){
-            //                         $("#response").html('');
-            //                     }, 2000);
-            //                 }
-            //             }
-
-            //         }) ; 
-            //     }else{
-            //         alert("please fill all fields") ; 
-            //     }
-            // }) ; 
-
-            // script for delete user
-            $(document).on('click', '#delete_button', function(){
-                var user_id = $(this).data("user_id") ; 
-                // now delete user directly
-                if(confirm('are you sure?')){
-                    $.ajax({
-                        url:"./handle_files/delete_user.php",
-                        method:"POST",
-                        data:{user_id:user_id},
-                        success:function(data){
-                            json = JSON.parse(data) ; 
-                            if(json['status'] == 'success'){
-                                $("#datatable").DataTable().draw() ; 
-                                $("#response").html('<div class="alert alert-success text-start">user deleted</div>') ; 
-                                setTimeout(function(){
-                                    $("#response").html('') ; 
-                                }, 2000) ; 
-                            }
-                        }
-                    });
-                }
-            }) ; 
         </script>
 
 
-        <!-- Start modal to add user -->
+        <!-- Start modal -->
         <div class="modal fade" id="user_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -288,51 +250,7 @@
                 </div>
             </div>
         </div>
-        <!-- End modal to add user -->
+        <!-- End modal -->
 
-
-        <!-- Start EDIT User modal -->
-        <!-- <div class="modal fade" id="edit_user" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit user</h1>
-                    <button id="close-modal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div id="response_edit" class="col-12 text-start"></div>
-                    </div>
-                    <form id="edit_user_form">
-                        <input type="hidden" name="_user_id" id="_user_id">
-                        <div class="mb-3">
-                            <label for="user_uname" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="_user_uname" name="_user_uname" aria-describedby="user_uname_help">
-                            <div id="user_uname_help" class="form-text">Enter your user name.</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="user_name" class="form-label">full name</label>
-                            <input type="text" class="form-control" id="_user_name" name="_user_name" value="test" aria-describedby="user_name_help">
-                            <div id="user_name_help" class="form-text">Enter your user name.</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="user_email" class="form-label">Email address</label>
-                            <input type="email" class="form-control" id="_user_email" name="_user_email" aria-describedby="user_email_help">
-                            <div id="user_email_help" class="form-text">We'll never share your email with anyone else.</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="user_password" class="form-label">user Password</label>
-                            <input type="password" class="form-control" id="_user_password" name="_user_password" aria-describedby="user_password_help">
-                            <div id="user_password_help" class="form-text">Enter your password.</div>
-                        </div>
-                </div>
-                <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Edit</button>
-                    </form>
-                </div>
-                </div>
-            </div>
-        </div> -->
-        <!-- End EDIT user Modal -->
     </body>
 </html>
