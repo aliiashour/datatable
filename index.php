@@ -96,7 +96,11 @@
                 }]
             }) ; 
 
-
+            // set datatable intervel to refresh
+            // setInterval(function(){
+            //     console.log("Sdf") ; 
+            //     $("#datatable").DataTable().draw() ; 
+            // }, 2500) ; 
             // script of add user form 
             $("#add_user").on("click", function(){
                 $modal_title = $(this).data("title") ; 
