@@ -15,8 +15,8 @@
                     'user_id' => $res['user_id'],
                     'user_name' => $res['user_name'],
                     'user_email' => $res['user_email'],
-                    'user_mobile' => $res['user_mobile'],
-                    'user_city' => $res['user_city']
+                    'user_uname' => $res['user_uname'],
+                    'user_password' => $res['user_password']
                 )
             ) ; 
         }else{

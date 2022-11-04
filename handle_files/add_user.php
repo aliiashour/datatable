@@ -3,26 +3,30 @@
     if($_SERVER['REQUEST_METHOD'] == "POST"){
         include_once "./connect_data_base.php" ; 
         extract($_REQUEST) ; 
-        $q = "INSERT INTO users SET 
-            user_name = :user_name,
-            user_email = :user_email,
-            user_mobile = :user_mobile,
-            user_city = :user_city" ; 
-        $stmt = $con->prepare($q) ; 
-        $res = $stmt->execute(array(
-            ':user_name' => $user_name,
-            ':user_email' => $user_email,
-            ':user_mobile' => $user_mobile,
-            ':user_city' => $user_city
-        ));
-        $data = '' ; 
-        if($res){
-            $data = array('status' => 'success') ; 
+        if(strlen($user_password) > 0){
+            $q = "INSERT INTO users SET 
+                user_name = :user_name,
+                user_email = :user_email,
+                user_uname = :user_uname,
+                user_password = :user_password" ; 
+            $stmt = $con->prepare($q) ; 
+            $res = $stmt->execute(array(
+                ':user_name' => $user_name,
+                ':user_email' => $user_email,
+                ':user_uname' => $user_uname,
+                ':user_password' => sha1($user_password)
+            ));
+            $data = '' ; 
+            if($res){
+                $data = array('status' => 'success', 'msg'=>'user successfully added') ; 
+            }else{
+                $data = array('status' => 'failed', 'msg'=>'can not add user') ; 
+            }
+            
+            echo json_encode($data) ; 
         }else{
-            $data = array('status' => 'failed') ; 
+            $data = array('status' => 'failed', 'msg'=>'fill all fieds') ; 
+            
+            echo json_encode($data) ; 
         }
-        
-        echo json_encode($data) ; 
-
-        
     }
